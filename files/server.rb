@@ -1,7 +1,7 @@
 log_level          :info
 log_location       STDOUT
 ssl_verify_mode    :verify_none
-chef_server_url    "http://SERVER_NAME:4000"
+chef_server_url    "http://SERVERNAME:4000"
 
 signing_ca_path    "/var/chef/ca"
 couchdb_database   'chef'

@@ -45,19 +45,30 @@ sudo mkdir /etc/chef
 [ ${WEBUI_PASSWORD} ] || WEBUI_PASSWORD='password'
 [ ${SERVERNAME} ] || SERVERNAME=`ip -f inet -o addr | grep eth0 | tr -s ' ' ' ' | cut -d ' ' -f 4 | cut -d '/' -f 1`
 
-cat files/server.rb | sed "s:SERVER_NAME:${SERVERNAME}:" | sed "s:PASSWORD:${WEBUI_PASSWORD}:" | sudo tee /etc/chef/server.rb > /dev/null
+cat files/server.rb | sed "s:SERVERNAME:${SERVERNAME}:" | sed "s:PASSWORD:${WEBUI_PASSWORD}:" | sudo tee /etc/chef/server.rb > /dev/null
 
 rvmsudo chef-solr-installer
 
 [ ${CHEF_SERVER_USER} ] || CHEF_SERVER_USER=`whoami`
-cd files/upstart
+pushd files/upstart
 for file in `ls`
 do
   cat ${file} | sed "s:USER:${CHEF_SERVER_USER}:" |sudo tee /etc/init/${file} > /dev/null
 done
+
+popd
 
 sudo apt-get install -y nginx
 sudo cp files/nginx/vhost /etc/nginx/sites-available/chef
 sudo rm /etc/nginx/sites-enabled/default
 sudo ln -s /etc/nginx/sites-available/chef /etc/nginx/sites-enabled/default
 sudo service nginx restart
+
+echo "################################################################################"
+echo
+echo "Done"
+echo
+
+echo "Chef-server is at http://${SERVERNAME}:4000"
+echo "Chef WebUI is at http://${SERVERNAME}"
+echo
