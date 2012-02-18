@@ -1,3 +1,5 @@
 user will need to be able to sudo
 
 rabbit has a 'confirm upgrade' step - need to bypass
+
+executable bit in git?
