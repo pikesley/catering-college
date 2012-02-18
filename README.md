@@ -6,18 +6,22 @@ Installing your own Chef server can be a bit hoop-jumpy. This abstracts all of t
 What does it do?
 ----------------
 
-Chef server depends on a truckload of not-necessarily-easy-to-install things. The script:
+Chef server depends on a truckload of not-necessarily-easy-to-install things. We mostly follow [this](http://wiki.opscode.com/display/chef/Installing+Chef+Server+Manually) with a detour into RVM and Ruby 1.9.2.
 
-+ Installs RVM
-+ Installs Ruby 1.9.2 (which isn't yet in the Ubuntu repos)
+The script:
+
 + Installs CouchDB
-+ Installs RabbitMQ
++ Installs and configures RabbitMQ
 + Installs Sun Java 1.6 (using [this witchcraft](https://github.com/flexiondotorg/oab-java6))
 + Installs OpsCode's Gecode
++ Installs RVM
++ Installs Ruby 1.9.2 (which isn't yet in the Ubuntu repos)
 + Installs the Chef gems (with rvmsudo, which is awesome)
 + Configures the Chef server
 + Creates upstart scripts for each of the Chef components
 + Installs nginx to proxy the Chef server WebUI
+
+These steps are mostly idempotent.
 
 How to use it
 -------------
@@ -51,4 +55,5 @@ Caveats
 
 + I've tested this to death on an Ubuntu Lucid VM. I suspect it'll probably work on other Debian-ish platforms.
 + The WebUI will be set as the default nginx vhost - we're basically assuming that it'll be the only vhost on this box (which seems to me to be a safe assumption in a world where everything is virtualised).
++ The configuration step for chef-solr assumes there's no data in there that we care about (which is obviously true for a new installation), and nukes the whole thing.
 
