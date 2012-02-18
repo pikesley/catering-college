@@ -55,3 +55,9 @@ for file in `ls`
 do
   cat ${file} | sed "s:USER:${CHEF_SERVER_USER}:" |sudo tee /etc/init/${file} > /dev/null
 done
+
+sudo apt-get install -y nginx
+sudo cp files/nginx/vhost /etc/nginx/sites-available/chef
+sudo rm /etc/nginx/sites-enabled/default
+sudo ln -s /etc/nginx/sites-available/chef /etc/nginx/sites-enabled/default
+sudo service nginx restart
