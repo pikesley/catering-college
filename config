@@ -1,2 +1,3 @@
 WEBUI_PASSWORD=prawn
 WEBUI_SERVERNAME=foo.bar.com
+CHEF_SERVER_USER=chef # or work out from whoami or something
