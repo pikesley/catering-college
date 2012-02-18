@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 . config
 
 sudo apt-get -y install curl build-essential
