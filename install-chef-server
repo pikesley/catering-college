@@ -65,7 +65,6 @@ done
 sudo service chef-expander start
 sudo service chef-solr start
 sudo service chef-server start
-sudo service chef-server-webui start
 
 cd ${STARTDIR}
 
