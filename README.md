@@ -21,10 +21,14 @@ Chef server depends on a truckload of not-necessarily-easy-to-install things. Th
 How to use it
 -------------
 
-You'll probably want to create a user to run all of this (I used 'chef'). This user needs to be able to sudo root - the shortest path to happiness (on Ubuntu at least) is to add them to the 'admin' group.
+We'll create a new user (I've used 'chef') and add them to the 'admin' group (the shortest path to sudo happiness, at least on Ubuntu). Then:
 
-Now, as this user:
-
+    NEWUSER=chef
+    sudo useradd -m ${NEWUSER} -s /bin/bash
+    cat /etc/group | sed "s/^\(admin:.*\)/\1,${NEWUSER}/" > /tmp/group && sudo mv /tmp/group /etc/
+    sudo apt-get update
+    sudo apt-get install -y git-core
+    sudo su - ${NEWUSER} 
     git clone https://github.com/pikesley/install-chef-server
     cd install-chef-server
     ./install-chef-server
