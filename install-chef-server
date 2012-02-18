@@ -2,6 +2,8 @@
 
 set -e
 
+STARTDIR=`pwd`
+
 . config
 
 sudo apt-get -y install curl build-essential
@@ -47,20 +49,25 @@ sudo mkdir -p /etc/chef
 [ ${WEBUI_PASSWORD} ] || WEBUI_PASSWORD='password'
 [ ${SERVERNAME} ] || SERVERNAME=`ip -f inet -o addr | grep eth0 | tr -s ' ' ' ' | cut -d ' ' -f 4 | cut -d '/' -f 1`
 
+cd ${STARTDIR}
 cat files/server.rb | sed "s:SERVERNAME:${SERVERNAME}:" | sed "s:PASSWORD:${WEBUI_PASSWORD}:" | sudo tee /etc/chef/server.rb > /dev/null
 
 rvmsudo chef-solr-installer
 
+cd ${STARTDIR}
 [ ${CHEF_SERVER_USER} ] || CHEF_SERVER_USER=`whoami`
 cd files/upstart
 for file in `ls`
 do
   cat ${file} | sed "s:USER:${CHEF_SERVER_USER}:" | sudo tee /etc/init/${file} > /dev/null
-  SERVICE=${file%.conf}
-  service ${SERVICE} start
 done
 
-cd ../../
+sudo service chef-expander start
+sudo service chef-solr start
+sudo service chef-server start
+sudo service chef-server-webui start
+
+cd ${STARTDIR}
 
 sudo apt-get install -y nginx
 sudo cp files/nginx/vhost /etc/nginx/sites-available/chef
