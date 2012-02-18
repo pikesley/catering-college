@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+#set -e
 
 STARTDIR=`pwd`
 
@@ -60,17 +60,26 @@ fi
 [ -e ~/.rvm/usr/lib/libz.so ] || rvm pkg install zlib
 [ -e ~/.rvm/usr/lib/libssl.so ] || rvm pkg install openssl
 [ -e ~/.rvm/usr/lib/libyaml.so ] || rvm pkg install libyaml
+
+if [ ! "`which ruby`" ]
+then
+  echo "*** WTF ***"
+  rvm install 1.9.2
+  rvm use 1.9.2 --default
+fi
+
 if [ ! "`ruby -v | grep 1.9.2`" ]
 then
   rvm install 1.9.2
+  rvm use 1.9.2 --default
 fi
 
 ruby -e "require 'openssl' ; require 'zlib'" 2> /dev/null
 if [ "$?" != "0" ]
 then
   rvm reinstall 1.9.2
+  rvm use 1.9.2 --default
 fi
-rvm use 1.9.2 --default
 
 for gem in chef-server chef-server-api chef-solr chef-server-webui 
 do
