@@ -105,6 +105,7 @@ done
 sudo mkdir -p /etc/chef
 [ ${WEBUI_PASSWORD} ] || WEBUI_PASSWORD='password'
 [ ${SERVERNAME} ] || SERVERNAME=`ip -f inet -o addr | grep eth0 | tr -s ' ' ' ' | cut -d ' ' -f 4 | cut -d '/' -f 1`
+cd ${STARTDIR}
 cat files/server.rb | sed "s:SERVERNAME:${SERVERNAME}:" | sed "s:PASSWORD:${WEBUI_PASSWORD}:" | sudo tee /etc/chef/server.rb > /dev/null
 
 # run the solr installer
