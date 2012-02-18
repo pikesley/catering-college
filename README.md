@@ -29,7 +29,9 @@ We'll create a new user (I've used 'chef') and add them to the 'admin' group (th
     cat /etc/group | sed "s/^\(admin:.*\)/\1,${NEWUSER}/" > /tmp/group && sudo mv /tmp/group /etc/
     sudo apt-get update
     sudo apt-get install -y git-core
+
     sudo su - ${NEWUSER} 
+
     git clone https://github.com/pikesley/install-chef-server
     cd install-chef-server
     ./install-chef-server
