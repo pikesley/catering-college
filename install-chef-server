@@ -15,7 +15,7 @@ sudo rabbitmqctl set_permissions -p /chef chef ".*" ".*" ".*"
 cd /tmp/
 wget https://raw.github.com/flexiondotorg/oab-java6/master/oab-java6.sh -O oab-java6.sh
 chmod +x oab-java6.sh 
-./oab-java6.sh
+sudo ./oab-java6.sh
 sudo apt-get -y install sun-java6-jre
 
 sudo apt-get -y install zlib1g-dev libxml2-dev
