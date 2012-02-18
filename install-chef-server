@@ -2,11 +2,11 @@
 
 . config
 
-sudo apt-get install curl build-essential
+sudo apt-get -y install curl build-essential
 
 bash -s stable < <(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
 
-sudo apt-get install couchdb rabbitmq-server
+sudo apt-get -y install couchdb rabbitmq-server
 
 sudo rabbitmqctl add_vhost /chef
 sudo rabbitmqctl add_user chef testing
@@ -16,16 +16,16 @@ cd /tmp/
 wget https://raw.github.com/flexiondotorg/oab-java6/master/oab-java6.sh -O oab-java6.sh
 chmod +x oab-java6.sh 
 ./oab-java6.sh
-sudo apt-get install sun-java6-jre
+sudo apt-get -y install sun-java6-jre
 
-sudo apt-get install zlib1g-dev libxml2-dev
+sudo apt-get -y install zlib1g-dev libxml2-dev
 
 echo "deb http://apt.opscode.com/ `lsb_release -cs`-0.10 main" | sudo tee /etc/apt/sources.list.d/opscode.list	sudo mkdir -p /etc/apt/trusted.gpg.d
 gpg --keyserver keys.gnupg.net --recv-keys 83EF826A
 gpg --export packages@opscode.com | sudo tee /etc/apt/trusted.gpg.d/opscode-keyring.gpg > /dev/null
-sudo apt-get update
-sudo apt-get install opscode-keyring
-sudo apt-get install libgecode-dev
+sudo apt-get -y update
+sudo apt-get -y install opscode-keyring
+sudo apt-get -y install libgecode-dev
 
 rvm pkg install zlib
 rvm pkg install openssl
