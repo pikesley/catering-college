@@ -1,7 +1,7 @@
 Install chef-server from scratch
 ================================
 
-Installing your own Chef server can be a bit hoop-jumpy. This abstracts all of those hoops into one (ugly) script.
+Installing your own Chef server can be a bit hoop-jumpy. This abstracts all of those hoops into one (ugly) script which does all the jumping for you.
 
 What does it do?
 ----------------
