@@ -40,12 +40,15 @@ echo "deb http://apt.opscode.com/ `lsb_release -cs`-0.10 main" | sudo tee /etc/a
 sudo mkdir -p /etc/apt/trusted.gpg.d
 
 # add their key
-EXITSTATUS=2
-while [ ${EXITSTATUS} == 2 ]
-do
-  gpg --keyserver keys.gnupg.net --recv-keys 83EF826A
-  EXITSTATUS=$?
-done
+if [ ! "`gpg --list-keys | grep 83EF826A`" ]
+then
+  EXITSTATUS=2
+  while [ ${EXITSTATUS} == 2 ]
+  do
+    gpg --keyserver keys.gnupg.net --recv-keys 83EF826A
+    EXITSTATUS=$?
+  done
+fi
 gpg --export packages@opscode.com | sudo tee /etc/apt/trusted.gpg.d/opscode-keyring.gpg > /dev/null
 
 # install opscode's packages
