@@ -6,7 +6,11 @@ sudo apt-get -y install curl build-essential
 
 bash -s stable < <(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
 
-sudo apt-get -y install couchdb rabbitmq-server
+sudo apt-get -y install couchdb
+
+echo "rabbitmq-server rabbitmq-server/upgrade_previous note" | sudo debconf-set-selections
+
+sudo apt-get install -y rabbitmq-server
 
 sudo rabbitmqctl add_vhost /chef
 sudo rabbitmqctl add_user chef testing
@@ -38,9 +42,9 @@ rvmsudo gem install chef-server-webui --no-ri --no-rdoc
 sudo mkdir /etc/chef
 
 [ ${WEBUI_PASSWORD} ] || WEBUI_PASSWORD='password'
-[ ${WEBUI_SERVERNAME} ] || WEBUI_SERVERNAME=`ip -f inet -o addr | grep eth0 | tr -s ' ' ' ' | cut -d ' ' -f 4 | cut -d '/' -f 1`
+[ ${SERVERNAME} ] || SERVERNAME=`ip -f inet -o addr | grep eth0 | tr -s ' ' ' ' | cut -d ' ' -f 4 | cut -d '/' -f 1`
 
-cat files/server.rb | sed "s:SERVER_NAME:${WEBUI_SERVERNAME}:" | sed "s:PASSWORD:${WEBUI_PASSWORD}:" > /etc/chef/server.rb
+cat files/server.rb | sed "s:SERVER_NAME:${SERVERNAME}:" | sed "s:PASSWORD:${WEBUI_PASSWORD}:" > /etc/chef/server.rb
 
 rvmsudo chef-solr-installer
 
