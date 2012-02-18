@@ -40,7 +40,7 @@ rvm use 1.9.2 --default
 rvmsudo gem install chef-server chef-server-api chef-server chef-solr --no-ri --no-rdoc
 rvmsudo gem install chef-server-webui --no-ri --no-rdoc
 
-sudo mkdir /etc/chef
+sudo mkdir -p /etc/chef
 
 [ ${WEBUI_PASSWORD} ] || WEBUI_PASSWORD='password'
 [ ${SERVERNAME} ] || SERVERNAME=`ip -f inet -o addr | grep eth0 | tr -s ' ' ' ' | cut -d ' ' -f 4 | cut -d '/' -f 1`
@@ -50,14 +50,14 @@ cat files/server.rb | sed "s:SERVERNAME:${SERVERNAME}:" | sed "s:PASSWORD:${WEBU
 rvmsudo chef-solr-installer
 
 [ ${CHEF_SERVER_USER} ] || CHEF_SERVER_USER=`whoami`
-pushd files/upstart
+cd files/upstart
 for file in `ls`
 do
-  cat ${file} | sed "s:USER:${CHEF_SERVER_USER}:" |sudo tee /etc/init/${file} > /dev/null
+  cat ${file} | sed "s:USER:${CHEF_SERVER_USER}:" | sudo tee /etc/init/${file} > /dev/null
   service ${file%.conf} start
 done
 
-popd
+cd ../../
 
 sudo apt-get install -y nginx
 sudo cp files/nginx/vhost /etc/nginx/sites-available/chef
@@ -65,6 +65,7 @@ sudo rm /etc/nginx/sites-enabled/default
 sudo ln -s /etc/nginx/sites-available/chef /etc/nginx/sites-enabled/default
 sudo service nginx restart
 
+echo
 echo "################################################################################"
 echo
 echo "Done"
