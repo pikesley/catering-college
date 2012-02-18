@@ -43,3 +43,8 @@ cat files/server.rb | sed "s:SERVER_NAME:${WEBUI_SERVERNAME}:" | sed "s:PASSWORD
 
 rvmsudo chef-solr-installer
 
+cd files/upstart
+for file in `ls`
+do
+  cat ${file} | sed "s:USER:${CHEF_SERVER_USER}:" > /etc/init/${file}
+done
