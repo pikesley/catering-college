@@ -34,6 +34,16 @@ We'll create a new user (I've used 'chef') and add them to the 'admin' group (th
     cd install-chef-server
     ./install-chef-server
 
+There's a trick here: `visudo`, then change this line:
+
+    %admin ALL=(ALL) ALL
+
+to
+
+    %admin ALL=(ALL) NOPASSWD: ALL
+
+to allow members of the 'admin' group to sudo without a password. You may not want to do this, of course.
+
 Caveats
 -------
 

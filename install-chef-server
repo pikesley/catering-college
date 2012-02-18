@@ -54,6 +54,7 @@ pushd files/upstart
 for file in `ls`
 do
   cat ${file} | sed "s:USER:${CHEF_SERVER_USER}:" |sudo tee /etc/init/${file} > /dev/null
+  service ${file%.conf} start
 done
 
 popd
