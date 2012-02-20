@@ -37,7 +37,7 @@ We'll create a new user (I've used 'chef') and add them to the 'admin' group (th
     sudo su - ${NEWUSER} 
 
     git clone https://github.com/pikesley/catering-college
-    cd install-chef-server
+    cd catering-college
     ./install-chef-server
 
 There's a trick here: `visudo`, then change this line:
