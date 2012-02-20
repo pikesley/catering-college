@@ -14,6 +14,8 @@ STARTDIR=`pwd`
 sudo apt-get -y install curl
 sudo apt-get -y install build-essential
 sudo apt-get -y install couchdb
+sudo apt-get -y install zlib1g-dev
+sudo apt-get -y install libxml2-dev
 
 # http://askubuntu.com/questions/27982/bypass-rabbitmq-ok-dialog-on-install/30160
 echo "rabbitmq-server rabbitmq-server/upgrade_previous note" | sudo debconf-set-selections
@@ -55,10 +57,6 @@ gpg --export packages@opscode.com | sudo tee /etc/apt/trusted.gpg.d/opscode-keyr
 sudo apt-get -y update
 sudo apt-get -y install opscode-keyring
 sudo apt-get -y install libgecode-dev
-
-# install some more packages
-sudo apt-get -y install zlib1g-dev
-sudo apt-get -y install libxml2-dev
 
 # install rvm
 # http://beginrescueend.com/rvm/install/
