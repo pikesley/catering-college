@@ -36,7 +36,7 @@ We'll create a new user (I've used 'chef') and add them to the 'admin' group (th
 
     sudo su - ${NEWUSER} 
 
-    git clone https://github.com/pikesley/install-chef-server
+    git clone https://github.com/pikesley/catering-college
     cd install-chef-server
     ./install-chef-server
 
