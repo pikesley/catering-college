@@ -16,7 +16,7 @@ The script:
 + Installs OpsCode's Gecode
 + Installs RVM
 + Installs Ruby 1.9.2 (which isn't yet in the Ubuntu repos)
-+ Installs the Chef gems (with rvmsudo, which is awesome)
++ Installs the Chef gems
 + Configures the Chef server
 + Creates upstart scripts for each of the Chef components
 + Installs nginx to proxy the Chef server WebUI

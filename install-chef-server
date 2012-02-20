@@ -11,15 +11,15 @@ STARTDIR=`pwd`
 . config
 
 # install some packages
-sudo apt-get -y install curl
-sudo apt-get -y install build-essential
-sudo apt-get -y install couchdb
-sudo apt-get -y install zlib1g-dev
-sudo apt-get -y install libxml2-dev
+sudo apt-get -y -q install curl
+sudo apt-get -y -q install build-essential
+sudo apt-get -y -q install couchdb
+sudo apt-get -y -q install zlib1g-dev
+sudo apt-get -y -q install libxml2-dev
 
 # http://askubuntu.com/questions/27982/bypass-rabbitmq-ok-dialog-on-install/30160
 echo "rabbitmq-server rabbitmq-server/upgrade_previous note" | sudo debconf-set-selections
-sudo apt-get install -y rabbitmq-server
+sudo apt-get install -y -q rabbitmq-server
 
 # configure rabbit (if it's not already done)
 [ `sudo rabbitmqctl list_vhosts | grep chef` ] || sudo rabbitmqctl add_vhost /chef
@@ -35,7 +35,7 @@ then
   chmod +x oab-java6.sh 
   sudo ./oab-java6.sh
 fi
-sudo apt-get -y --force-yes install sun-java6-jre
+sudo apt-get -y -q --force-yes install sun-java6-jre
 
 # add the opscode repo
 echo "deb http://apt.opscode.com/ `lsb_release -cs`-0.10 main" | sudo tee /etc/apt/sources.list.d/opscode.list > /dev/null
@@ -54,9 +54,9 @@ fi
 gpg --export packages@opscode.com | sudo tee /etc/apt/trusted.gpg.d/opscode-keyring.gpg > /dev/null
 
 # install opscode's packages
-sudo apt-get -y update
-sudo apt-get -y install opscode-keyring
-sudo apt-get -y install libgecode-dev
+sudo apt-get -y -q update
+sudo apt-get -y -q install opscode-keyring
+sudo apt-get -y -q install libgecode-dev
 
 # install rvm
 # http://beginrescueend.com/rvm/install/
@@ -98,20 +98,22 @@ for gem in chef-server chef-server-api chef-solr chef-server-webui
 do
   if [ ! "`gem list | grep \"${gem} \"`" ]
   then
-    rvmsudo gem install ${gem} --no-ri --no-rdoc
+    gem install ${gem} --no-ri --no-rdoc
   fi
 done
 
 # install the chef config file
 sudo mkdir -p /etc/chef
+sudo chown -R `whoami` /etc/chef
 [ ${WEBUI_PASSWORD} ] || WEBUI_PASSWORD='password'
 [ ${SERVERNAME} ] || SERVERNAME=`ip -f inet -o addr | grep eth0 | tr -s ' ' ' ' | cut -d ' ' -f 4 | cut -d '/' -f 1`
 cd ${STARTDIR}
 cat files/server.rb | sed "s:SERVERNAME:${SERVERNAME}:" | sed "s:PASSWORD:${WEBUI_PASSWORD}:" | sudo tee /etc/chef/server.rb > /dev/null
-
 # run the solr installer
 # NOTE: THIS WILL NUKE ANY EXISTING CHEF SOLR CONFIGURATION AND DATA
-rvmsudo chef-solr-installer -f
+sudo mkdir -p /var/chef
+sudo chown -R `whoami` /var/chef
+chef-solr-installer -f
 
 # install the upstart configs
 [ ${CHEF_SERVER_USER} ] || CHEF_SERVER_USER=`whoami`
@@ -127,7 +129,7 @@ sudo service chef-solr start || sudo service chef-solr restart
 sudo service chef-server start || sudo service chef-server restart
 
 # install nginx and set up the vhost to proxy the chef webui
-sudo apt-get install -y nginx
+sudo apt-get install -y -q nginx
 cd ${STARTDIR}
 sudo cp files/nginx/vhost /etc/nginx/sites-available/chef
 sudo rm /etc/nginx/sites-enabled/default
