@@ -132,7 +132,7 @@ do
     sed "s:    :  :g" | \
     sed "s:test -x .* || \(.*\):su - ${CHEF_SERVER_USER} -c \"which ${service}\" || \1:" | \
     sed "s:exec /usr/bin/${service} \(.*\):script\n  su - ${CHEF_SERVER_USER} -c \"${service} \1\"\nend script:" | \
-    sudo tee /etc/init/${service} > /dev/null
+    sudo tee /etc/init/${outfile} > /dev/null
 
 # symlinking here means we get tab-complete in 'service foo start'-type stuff
 # (among other things, I'm sure)
