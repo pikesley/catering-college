@@ -115,18 +115,33 @@ sudo mkdir -p /var/chef
 sudo chown -R `whoami` /var/chef
 chef-solr-installer -f
 
-# install the upstart configs
+sudo mkdir -p /var/log/chef
+sudo chown -R `whoami` /var/log/chef
+
+# setup the services
 [ ${CHEF_SERVER_USER} ] || CHEF_SERVER_USER=`whoami`
-cd ${STARTDIR}/files/upstart
-for file in `ls`
+# the chef gems supply some upstart scripts, but they run everything as root
+# we'd rather run as whatever chef user we're using
+for file in `find ~/.rvm/ | grep debian/etc/init/ | grep -v client`
 do
-  cat ${file} | sed "s:USER:${CHEF_SERVER_USER}:" | sudo tee /etc/init/${file} > /dev/null
+  outfile=`basename ${file}`
+  service=${outfile%.conf}
+
+# horrendous sed monster to make these jobs run as our user 
+  cat ${file} | \
+    sed "s:    :  :g" | \
+    sed "s:test -x .* || \(.*\):su - ${CHEF_SERVER_USER} -c \"which ${service}\" || \1:" | \
+    sed "s:exec /usr/bin/${service} \(.*\):script\n  su - ${CHEF_SERVER_USER} -c \"${service} \1\"\nend script:" | \
+    sudo tee /etc/init/${service} > /dev/null
+
+# symlinking here means we get tab-complete in 'service foo start'-type stuff
+# (among other things, I'm sure)
+  sudo ln -sf /lib/init/upstart-job /etc/init.d/${service}
+# actually start the thing
+  sudo service ${service} start 2> /dev/null || sudo service ${service} restart
 done
 
-# start the services
-sudo service chef-expander start || sudo service chef-expander restart
-sudo service chef-solr start || sudo service chef-solr restart
-sudo service chef-server start || sudo service chef-server restart
+exit
 
 # install nginx and set up the vhost to proxy the chef webui
 sudo apt-get install -y -q nginx
