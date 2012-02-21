@@ -141,8 +141,6 @@ do
   sudo service ${service} start 2> /dev/null || sudo service ${service} restart
 done
 
-exit
-
 # install nginx and set up the vhost to proxy the chef webui
 sudo apt-get install -y -q nginx
 cd ${STARTDIR}
