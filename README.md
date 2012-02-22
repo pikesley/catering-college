@@ -11,7 +11,7 @@ Chef server depends on a truckload of not-necessarily-easy-to-install things. We
 The script:
 
 + Installs CouchDB
-+ Installs and configures RabbitMQ
++ Installs and configures RabbitMQ (a more recent version than is in the Ubuntu repos)
 + Installs Sun Java 1.6 (using [this witchcraft](https://github.com/flexiondotorg/oab-java6))
 + Installs OpsCode's Gecode
 + Installs RVM
