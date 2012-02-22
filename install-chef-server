@@ -68,6 +68,8 @@ sudo apt-get -y -q install rabbitmq-server
 [ "`sudo rabbitmqctl list_users | grep chef`" ] \
   || sudo rabbitmqctl add_user chef testing
 sudo rabbitmqctl set_permissions -p /chef chef ".*" ".*" ".*"
+sudo rabbitmq-plugins enable rabbitmq_management
+sudo service rabbitmq-server restart
 
 # install rvm
 # http://beginrescueend.com/rvm/install/
