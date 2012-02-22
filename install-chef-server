@@ -10,35 +10,9 @@ STARTDIR=`pwd`
 # read the config file
 . config
 
-# install some packages
-sudo apt-get -y -q install curl
-sudo apt-get -y -q install build-essential
-sudo apt-get -y -q install couchdb
-sudo apt-get -y -q install zlib1g-dev
-sudo apt-get -y -q install libxml2-dev
-
-# http://askubuntu.com/questions/27982/bypass-rabbitmq-ok-dialog-on-install/30160
-echo "rabbitmq-server rabbitmq-server/upgrade_previous note" | sudo debconf-set-selections
-sudo apt-get install -y -q rabbitmq-server
-
-# configure rabbit (if it's not already done)
-[ `sudo rabbitmqctl list_vhosts | grep chef` ] || sudo rabbitmqctl add_vhost /chef
-[ `sudo rabbitmqctl list_users | grep chef` ] || sudo rabbitmqctl add_user chef testing
-sudo rabbitmqctl set_permissions -p /chef chef ".*" ".*" ".*"
-
-# install Sun java via this witchcraft
-# https://github.com/flexiondotorg/oab-java6
-if [ ! -e /var/local/oab/deb/sun-java6-jre* ]
-then
-  cd /tmp/
-  wget https://raw.github.com/flexiondotorg/oab-java6/master/oab-java6.sh -O oab-java6.sh
-  chmod +x oab-java6.sh 
-  sudo ./oab-java6.sh
-fi
-sudo apt-get -y -q --force-yes install sun-java6-jre
-
 # add the opscode repo
-echo "deb http://apt.opscode.com/ `lsb_release -cs`-0.10 main" | sudo tee /etc/apt/sources.list.d/opscode.list > /dev/null
+echo "deb http://apt.opscode.com/ `lsb_release -cs`-0.10 main" | \
+  sudo tee /etc/apt/sources.list.d/opscode.list > /dev/null
 sudo mkdir -p /etc/apt/trusted.gpg.d
 
 # add their key
@@ -51,18 +25,57 @@ then
     EXITSTATUS=$?
   done
 fi
-gpg --export packages@opscode.com | sudo tee /etc/apt/trusted.gpg.d/opscode-keyring.gpg > /dev/null
+gpg --export packages@opscode.com | \
+  sudo tee /etc/apt/trusted.gpg.d/opscode-keyring.gpg > /dev/null
 
-# install opscode's packages
+# RabbitMQ repo
+echo "deb http://www.rabbitmq.com/debian/ testing main" | \
+  sudo tee /etc/apt/sources.list.d/opscode.list
+
+if [ ! "`sudo apt-key list | grep Rabbit`" ]
+then
+  cd /tmp
+  wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+  sudo apt-key add rabbitmq-signing-key-public.asc
+fi
+# install Sun java via this witchcraft
+# https://github.com/flexiondotorg/oab-java6
 sudo apt-get -y -q update
-sudo apt-get -y -q install opscode-keyring
+
+if [ ! -e /var/local/oab/deb/sun-java6-jre* ]
+then
+  cd /tmp/
+  wget https://raw.github.com/flexiondotorg/oab-java6/master/oab-java6.sh \
+    -O oab-java6.sh
+  chmod +x oab-java6.sh 
+  sudo ./oab-java6.sh
+fi
+
+# install some packages
+sudo apt-get -y -q install curl
+sudo apt-get -y -q install build-essential
+sudo apt-get -y -q install couchdb
+sudo apt-get -y -q install zlib1g-dev
+sudo apt-get -y -q install libxml2-dev
+sudo apt-get -y -q install nginx
+sudo apt-get -y -q --force-yes install sun-java6-jre
+#sudo apt-get -y -q install opscode-keyring
 sudo apt-get -y -q install libgecode-dev
+sudo apt-get -y -q install rabbitmq-server
+
+# configure rabbit (if it's not already done)
+[ "`sudo rabbitmqctl list_vhosts | grep chef`" ] \
+  || sudo rabbitmqctl add_vhost /chef
+[ "`sudo rabbitmqctl list_users | grep chef`" ] \
+  || sudo rabbitmqctl add_user chef testing
+sudo rabbitmqctl set_permissions -p /chef chef ".*" ".*" ".*"
 
 # install rvm
 # http://beginrescueend.com/rvm/install/
 if [ ! -e ~/.rvm/scripts/rvm ]
 then
-  bash -s stable < <(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+  bash -s stable < <(curl \
+    -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
 fi
 
 # install these ruby libs (if we don't wlaready have them)
@@ -71,27 +84,37 @@ fi
 [ -e ~/.rvm/usr/lib/libssl.so ] || rvm pkg install openssl
 [ -e ~/.rvm/usr/lib/libyaml.so ] || rvm pkg install libyaml
 
+! (rvm use 1.9.2 && ruby -e "require 'openssl' ; require 'zlib'" 2> /dev/null) \
+  && rvm reinstall 1.9.2 && rvm use 1.9.2 --default
+exit
+
+#if [ ! "`rvm list | grep 1.9.2`" ]
+#then
+#  echo "No rvm rubies"
+#fi
+#exit
+
 # if we don't have ruby, rvm-install it
-if [ ! "`which ruby`" ]
-then
-  rvm install 1.9.2
-  rvm use 1.9.2 --default
-fi
+#if [ ! "`which ruby`" ]
+#then
+#  rvm install 1.9.2
+#  rvm use 1.9.2 --default
+#fi
 
 # if we've got the wrong version, rvm-install the right version
-if [ ! "`ruby -v | grep 1.9.2`" ]
-then
-  rvm install 1.9.2
-  rvm use 1.9.2 --default
-fi
+#if [ ! "`ruby -v | grep 1.9.2`" ]
+#then
+#  rvm install 1.9.2
+#  rvm use 1.9.2 --default
+#fi
 
 # if we can't use these gems, we need to reinstall ruby
-ruby -e "require 'openssl' ; require 'zlib'" 2> /dev/null
-if [ "$?" != "0" ]
-then
-  rvm reinstall 1.9.2
-  rvm use 1.9.2 --default
-fi
+#ruby -e "require 'openssl' ; require 'zlib'" 2> /dev/null
+#if [ "$?" != "0" ]
+#then
+#  rvm reinstall 1.9.2
+#  rvm use 1.9.2 --default
+#fi
 
 # install the chef gems (if we don't already have them)
 for gem in chef-server chef-server-api chef-solr chef-server-webui 
@@ -142,7 +165,6 @@ do
 done
 
 # install nginx and set up the vhost to proxy the chef webui
-sudo apt-get install -y -q nginx
 cd ${STARTDIR}
 sudo cp files/nginx/vhost /etc/nginx/sites-available/chef
 sudo rm /etc/nginx/sites-enabled/default
