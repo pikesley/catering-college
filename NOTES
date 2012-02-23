@@ -1,7 +1,3 @@
-Get the newer version of rabbit:
-
-echo "deb http://www.rabbitmq.com/debian/ testing main" | sudo tee /etc/apt/sources.list.d/opscode.list
-wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
-sudo apt-key add rabbitmq-signing-key-public.asc
-apt-get update
-apt-get install rabbitmq-server
+vagrant: making boxen to make it available for others to download and use
+vagrant-sahara: a plugin to vagrant to give you snapshots to use as sandboxes
+foreman: a way to abstract away upstart or init scripts, and make using multiprocess apps easier to work with

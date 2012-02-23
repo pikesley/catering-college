@@ -13,9 +13,8 @@ STARTDIR=`pwd`
 # add the opscode repo
 echo "deb http://apt.opscode.com/ `lsb_release -cs`-0.10 main" | \
   sudo tee /etc/apt/sources.list.d/opscode.list > /dev/null
+# and their key
 sudo mkdir -p /etc/apt/trusted.gpg.d
-
-# add their key
 if [ ! "`gpg --list-keys | grep 83EF826A`" ]
 then
   EXITSTATUS=2
@@ -31,14 +30,14 @@ gpg --export packages@opscode.com | \
 # RabbitMQ repo
 echo "deb http://www.rabbitmq.com/debian/ testing main" | \
   sudo tee /etc/apt/sources.list.d/rabbit.list > /dev/null
-
 if [ ! "`sudo apt-key list | grep Rabbit`" ]
 then
   cd /tmp
   wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
   sudo apt-key add rabbitmq-signing-key-public.asc
 fi
-# install Sun java via this witchcraft
+
+# prepare Sun java debs via this witchcraft
 # https://github.com/flexiondotorg/oab-java6
 if [ ! -e /var/local/oab/deb/sun-java6-jre* ]
 then
@@ -68,6 +67,7 @@ sudo apt-get -y -q install rabbitmq-server
 [ "`sudo rabbitmqctl list_users | grep chef`" ] \
   || sudo rabbitmqctl add_user chef testing
 sudo rabbitmqctl set_permissions -p /chef chef ".*" ".*" ".*"
+# we also like the rabbit webui management thing
 sudo rabbitmq-plugins enable rabbitmq_management
 sudo service rabbitmq-server restart
 
@@ -79,12 +79,14 @@ then
     -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
 fi
 
-# install these ruby libs (if we don't wlaready have them)
+# install these ruby libs (if we don't already have them)
 . ~/.rvm/scripts/rvm
 [ -e ~/.rvm/usr/lib/libz.so ] || rvm pkg install zlib
 [ -e ~/.rvm/usr/lib/libssl.so ] || rvm pkg install openssl
 [ -e ~/.rvm/usr/lib/libyaml.so ] || rvm pkg install libyaml
 
+# check if have the right version of ruby with the correct libs available,
+# if not we reinstall
 ! (rvm use 1.9.2 && ruby -e "require 'openssl' ; require 'zlib'" 2> /dev/null) \
   && rvm reinstall 1.9.2 && rvm use 1.9.2 --default
 
@@ -103,7 +105,6 @@ sudo chown -R `whoami` /etc/chef
 [ ${WEBUI_PASSWORD} ] || WEBUI_PASSWORD='password'
 [ ${SERVERNAME} ] || SERVERNAME=`ip -f inet -o addr | grep eth0 \
   | tr -s ' ' ' ' | cut -d ' ' -f 4 | cut -d '/' -f 1`
-
 cat ${STARTDIR}/files/server.rb | sed "s:SERVERNAME:${SERVERNAME}:" \
   | sed "s:PASSWORD:${WEBUI_PASSWORD}:" \
   | sudo tee /etc/chef/server.rb > /dev/null
@@ -114,6 +115,7 @@ sudo mkdir -p /var/chef
 sudo chown -R `whoami` /var/chef
 chef-solr-installer -f
 
+# we do this so we don't have to run as root
 sudo mkdir -p /var/log/chef
 sudo chown -R `whoami` /var/log/chef
 
@@ -140,13 +142,14 @@ do
   sudo service ${service} start 2> /dev/null || sudo service ${service} restart
 done
 
-# install nginx and set up the vhost to proxy the chef webui
+# set up the nginx vhost to proxy the chef webui
 sudo cp ${STARTDIR}/files/nginx/vhost /etc/nginx/sites-available/chef
 sudo rm /etc/nginx/sites-enabled/default
 sudo ln -s /etc/nginx/sites-available/chef /etc/nginx/sites-enabled/default
 sudo service nginx restart
 
-# done
+# end
+
 echo
 echo "################################################################################"
 echo
