@@ -3,3 +3,5 @@ vagrant-sahara: a plugin to vagrant to give you snapshots to use as sandboxes
 foreman: a way to abstract away upstart or init scripts, and make using multiprocess apps easier to work with
 
 Also this: http://wiki.opscode.com/display/chef/Installing+Chef+Server+Manually#InstallingChefServerManually-ConfiguretheCommandLineClient for post-install
+
+Also the nginx redirect is flawed: relative paths somewhere? try deleting a client
