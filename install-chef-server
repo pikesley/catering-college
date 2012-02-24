@@ -5,6 +5,9 @@
 
 #set -e
 
+# needs setting on vagrant VMs for some reason
+PATH=${PATH}:/usr/local/sbin:/usr/sbin:/sbin
+
 STARTDIR=`pwd`
 
 # read the config file
