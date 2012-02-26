@@ -1,0 +1,10 @@
+upstream UPSTREAM {
+  server 127.0.0.1:PORT;
+}
+
+server {
+  server_name SERVERNAME;
+  location / {
+    proxy_pass http://UPSTREAM;
+  }
+}

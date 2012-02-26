@@ -19,7 +19,7 @@ The script:
 + Installs the Chef gems
 + Configures the Chef server
 + Creates upstart scripts for each of the Chef components
-+ Installs nginx to proxy the Chef server WebUI
++ Installs nginx to proxy the Chef server, the WebUI and the RabbitMQ web interface
 
 These steps are mostly idempotent.
 
@@ -58,6 +58,5 @@ Caveats
 -------
 
 + I've tested this to death on an Ubuntu Lucid VM. I suspect it'll probably work on other Debian-ish platforms.
-+ The WebUI will be set as the default nginx vhost - we're basically assuming that it'll be the only vhost on this box (which seems to me to be a safe assumption in a world where everything is virtualised).
 + The configuration step for chef-solr assumes there's no data in there that we care about (which is obviously true for a new installation), and nukes the whole thing.
 

@@ -11,7 +11,7 @@ PATH=${PATH}:/usr/local/sbin:/usr/sbin:/sbin
 STARTDIR=`pwd`
 
 # read the config file
-. config
+. conf/config
 
 # add the opscode repo
 echo "deb http://apt.opscode.com/ `lsb_release -cs`-0.10 main" | \
@@ -145,21 +145,41 @@ do
   sudo service ${service} start 2> /dev/null || sudo service ${service} restart
 done
 
-# set up the nginx vhost to proxy the chef webui
-sudo cp ${STARTDIR}/files/nginx/vhost /etc/nginx/sites-available/chef
-sudo rm /etc/nginx/sites-enabled/default
-sudo ln -s /etc/nginx/sites-available/chef /etc/nginx/sites-enabled/default
+# set up the nginx vhosts to proxy this stuff
+#cd ${STARTDIR}/files/nginx
+#for file in `ls`
+#do
+#  NAME=`echo ${file} | tr "[:lower:]" "[:upper:]"`NAME
+
+## @OrganizedGang explained this indirect reference voodoo to me
+#  REPLACEMENT=${!NAME}
+#  [ ${REPLACEMENT} ] || REPLACEMENT=${file}
+#  cat ${file} | sed "s:${NAME}:${REPLACEMENT}:" |\
+#    sudo tee /etc/nginx/sites-available/${REPLACEMENT} > /dev/null
+#done
+
+for line in `cat conf/vhosts`
+do
+  UPSTREAM=`echo ${line} | cut -d ':' -f 1`
+  PORT=`echo ${line} | cut -d ':' -f 2`
+  SERVERNAME=`echo ${line} | cut -d ':' -f 3`
+  cat files/nginx/vhost.template |\
+    sed "s:UPSTREAM:${UPSTREAM}:" |\
+    sed "s:PORT:${PORT}:" |\
+    sed "s:SERVERNAME:${SERVERNAME}:" |\
+    sudo tee /etc/nginx/sites-available/${SERVERNAME} > /dev/null
+  [ ${PORT} == "4040" ] && WEBUI="http://${SERVERNAME}"
+  [ ${PORT} == "4000" ] && CHEFSERVER="http://${SERVERNAME}"
+done
+
 sudo service nginx restart
 
 # end
 
 echo
-echo "################################################################################"
-echo
-echo "Done"
-echo
 
-echo "Chef-server is at http://${SERVERNAME}:4000"
-echo "Chef WebUI is at http://${SERVERNAME}"
+echo "Chef-server is at ${CHEFSERVER}"
+echo "Chef WebUI is at ${WEBUI}"
 
 echo
+knife configure -i

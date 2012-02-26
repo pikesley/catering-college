@@ -1,0 +1,3 @@
+chef-server:4000:chef.foo.bar
+chef-webui:4040:webui.chef.foo.bar
+chef-rabbit:55672:rabbit.chef.foo.bar
