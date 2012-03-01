@@ -170,6 +170,7 @@ do
     sudo tee /etc/nginx/sites-available/${SERVERNAME} > /dev/null
   [ ${PORT} == "4040" ] && WEBUI="http://${SERVERNAME}"
   [ ${PORT} == "4000" ] && CHEFSERVER="http://${SERVERNAME}"
+  sudo ln -s /etc/nginx/sites-available/${SERVERNAME} /etc/nginx/sites-enabled
 done
 
 sudo service nginx restart
