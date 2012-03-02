@@ -158,6 +158,7 @@ done
 #    sudo tee /etc/nginx/sites-available/${REPLACEMENT} > /dev/null
 #done
 
+cd ${STARTDIR}
 for line in `cat conf/vhosts`
 do
   UPSTREAM=`echo ${line} | cut -d ':' -f 1`
