@@ -19,9 +19,7 @@ The script:
 + Installs the Chef gems
 + Configures the Chef server
 + Creates upstart scripts for each of the Chef components
-+ Installs nginx to proxy the WebUI
-++ It proxies the Chef server too but this doesn't work properly ATM; we can still hit it on port 4000
-+++ I think I have a fix for the above issue, it's in the _develop_ branch, I'll merge it once I've tested it properly
++ Installs nginx to proxy the WebUI - it proxies the Chef server too but this doesn't work properly ATM; we can still hit it on port 4000 - I think I have a fix for this, it's in the _develop_ branch, I'll merge it once I've tested it properly
 
 These steps are mostly idempotent.
 
