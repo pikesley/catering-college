@@ -170,7 +170,7 @@ do
     sed "s:SERVERNAME:${SERVERNAME}:" |\
     sudo tee /etc/nginx/sites-available/${SERVERNAME} > /dev/null
   [ ${PORT} == "4040" ] && WEBUI="http://${SERVERNAME}"
-  [ ${PORT} == "4000" ] && CHEFSERVER="http://${SERVERNAME}"
+  [ ${PORT} == "4000" ] && CHEFSERVER="http://${SERVERNAME}:4000"
   sudo ln -s /etc/nginx/sites-available/${SERVERNAME} /etc/nginx/sites-enabled
 done
 
@@ -182,6 +182,7 @@ echo
 
 echo "Chef-server is at ${CHEFSERVER}"
 echo "Chef WebUI is at ${WEBUI}"
+echo "WebUI login: admin/${WEBUI_PASSWORD}"
 
 echo
 knife configure -i
