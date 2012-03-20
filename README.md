@@ -30,7 +30,7 @@ Dead-simple install:
 
     sudo apt-get install -y curl ; bash <(curl -s https://raw.github.com/gist/1869395/179c776758d8aae317b63fa87c447b821fb420a4/catering-college-installer)
 
-(Note that this will give you shitty defaults for your nginx virtualhosts, so see below):
+(Note that this will give you shitty defaults for your nginx virtualhosts):
 
 What the above is actually doing: we create a new user (I've used 'chef') and add them to the 'admin' group (the shortest path to sudo happiness, at least on Ubuntu). Then, as this new user, checkout and run the script.
 
