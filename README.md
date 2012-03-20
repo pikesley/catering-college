@@ -19,7 +19,7 @@ The script:
 + Installs the Chef gems
 + Configures the Chef server
 + Creates upstart scripts for each of the Chef components
-+ Installs nginx to proxy the Chef server, the WebUI and the RabbitMQ web interface
++ Installs nginx to proxy the WebUI (it proxies the Chef server too but this doesn't work properly ATM)
 
 These steps are mostly idempotent.
 
