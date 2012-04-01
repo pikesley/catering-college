@@ -19,7 +19,7 @@ The script:
 + Installs the Chef gems
 + Configures the Chef server
 + Creates upstart scripts for each of the Chef components
-+ Installs nginx to proxy the WebUI - it proxies the Chef server too but this doesn't work properly ATM; we can still hit it on port 4000 - I think I have a fix for this, it's in the _develop_ branch, I'll merge it once I've tested it properly
++ Installs nginx to proxy the WebUI
 
 Regarding Java, the delightful people at Oracle, always the friends of free software, have moved the goalposts and the oab-java6 thing no longer works. I know people have come up with workarounds for this, but no doubt these will get stepped on soon, too. Life is too short to spend it trying to outwit lawyer-driven corporations, so it now tests if Java is already instaled, and if not, installs OpenJDK (which seems to work OK for me).
 

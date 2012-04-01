@@ -164,7 +164,7 @@ for line in `cat conf/vhosts`
 do
   UPSTREAM=`echo ${line} | cut -d ':' -f 1`
   PORT=`echo ${line} | cut -d ':' -f 2`
-  SERVERNAME=`echo ${line} | cut -d ':' -f 3`
+  SERVERNAME=`echo ${line} | cut -d ':' -f 3`.`hostname -f`
   cat files/nginx/vhost.template |\
     sed "s:UPSTREAM:${UPSTREAM}:" |\
     sed "s:PORT:${PORT}:" |\
@@ -172,7 +172,7 @@ do
     sudo tee /etc/nginx/sites-available/${SERVERNAME} > /dev/null
   [ ${PORT} == "4040" ] && WEBUI="http://${SERVERNAME}"
   [ ${PORT} == "4000" ] && CHEFSERVER="http://${SERVERNAME}:4000"
-  sudo ln -s /etc/nginx/sites-available/${SERVERNAME} /etc/nginx/sites-enabled
+  sudo ln -sf /etc/nginx/sites-available/${SERVERNAME} /etc/nginx/sites-enabled
 done
 
 sudo service nginx restart
