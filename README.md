@@ -12,7 +12,7 @@ The script:
 
 + Installs CouchDB
 + Installs and configures RabbitMQ (a more recent version than is in the Ubuntu repos)
-+ Installs Sun Java 1.6 (using [this witchcraft](https://github.com/flexiondotorg/oab-java6))
++ Installs Sun Java 1.6 (using [this witchcraft](https://github.com/flexiondotorg/oab-java6)) - THIS IS NOW BROKEN, SEE BELOW
 + Installs OpsCode's Gecode
 + Installs RVM
 + Installs Ruby 1.9.2 (which isn't yet in the Ubuntu repos)
@@ -20,6 +20,8 @@ The script:
 + Configures the Chef server
 + Creates upstart scripts for each of the Chef components
 + Installs nginx to proxy the WebUI - it proxies the Chef server too but this doesn't work properly ATM; we can still hit it on port 4000 - I think I have a fix for this, it's in the _develop_ branch, I'll merge it once I've tested it properly
+
+Regarding Java, the delightful people at Oracle, always the friends of free software, have moved the goalposts and the oab-java6 thing no longer works. I know people have come up with workarounds for this, but no doubt these will get stepped on soon, too. Life is too short to spend it trying to outwit lawyer-driven corporations, so it now tests if Java is already instaled, and if not, installs OpenJDK (which seems to work OK for me).
 
 These steps are mostly idempotent.
 
