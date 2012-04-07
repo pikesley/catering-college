@@ -63,7 +63,7 @@ sudo apt-get -y -q install nginx
 sudo apt-get -y -q install opscode-keyring
 sudo apt-get -y -q install libgecode-dev
 sudo apt-get -y -q install rabbitmq-server
-`java -version 2> /dev/null` && sudo apt-get -y -q install openjdk-6-jdk
+`java -version 2> /dev/null` || sudo apt-get -y -q install openjdk-6-jdk
 
 # configure rabbit (if it's not already done)
 [ "`sudo rabbitmqctl list_vhosts | grep chef`" ] \
