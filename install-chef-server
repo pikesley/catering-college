@@ -85,14 +85,14 @@ fi
 
 # install these ruby libs (if we don't already have them)
 . ~/.rvm/scripts/rvm
-[ -e ~/.rvm/usr/lib/libz.so ] || rvm pkg install zlib
+[ -e ~/.rvm/usr/lib/libz.so ] || rvm pkg install zlib --verify-downloads 1
 [ -e ~/.rvm/usr/lib/libssl.so ] || rvm pkg install openssl
 [ -e ~/.rvm/usr/lib/libyaml.so ] || rvm pkg install libyaml
 
 # check if have the right version of ruby with the correct libs available,
 # if not we reinstall
-! (rvm use 1.9.2 && ruby -e "require 'openssl' ; require 'zlib'" 2> /dev/null) \
-  && rvm reinstall 1.9.2 && rvm use 1.9.2 --default
+! (rvm use 1.9.3 && ruby -e "require 'openssl' ; require 'zlib'" 2> /dev/null) \
+  && rvm reinstall 1.9.3 && rvm use 1.9.3 --default
 
 # install the chef gems (if we don't already have them)
 for gem in chef-server chef-server-api chef-solr chef-server-webui 
