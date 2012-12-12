@@ -6,7 +6,7 @@ Installing your own Chef server can be a bit hoop-jumpy. This abstracts all of t
 What does it do?
 ----------------
 
-Chef server depends on a truckload of not-necessarily-easy-to-install things. We mostly follow [this](http://wiki.opscode.com/display/chef/Installing+Chef+Server+Manually) with a detour into RVM and Ruby 1.9.2.
+Chef server depends on a truckload of not-necessarily-easy-to-install things. We mostly follow [this](http://wiki.opscode.com/display/chef/Installing+Chef+Server+Manually) with a detour into RVM and Ruby 1.9.3.
 
 The script:
 
@@ -15,7 +15,7 @@ The script:
 + Installs Sun Java 1.6 (using [this witchcraft](https://github.com/flexiondotorg/oab-java6)) - THIS IS NOW BROKEN, SEE BELOW
 + Installs OpsCode's Gecode
 + Installs RVM
-+ Installs Ruby 1.9.2 (which isn't yet in the Ubuntu repos)
++ Installs Ruby 1.9.3 (which isn't yet in the Ubuntu repos)
 + Installs the Chef gems
 + Configures the Chef server
 + Creates upstart scripts for each of the Chef components
@@ -59,6 +59,6 @@ to allow members of the 'admin' group to sudo without a password. You may not wa
 Caveats
 -------
 
-+ I've tested this to death on an Ubuntu Lucid VM. I suspect it'll probably work on other Debian-ish platforms.
++ I've tested this to death on an Ubuntu Lucid VM. I suspect it'll probably work on other Debian-ish platforms. It's also know to work on Precise.
 + The configuration step for chef-solr assumes there's no data in there that we care about (which is obviously true for a new installation), and nukes the whole thing. There may be ways around this, but I don't know how Solr works and I really have no desire to.
 
