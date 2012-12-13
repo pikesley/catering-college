@@ -59,6 +59,6 @@ to allow members of the 'admin' group to sudo without a password. You may not wa
 Caveats
 -------
 
-+ I've tested this to death on an Ubuntu Lucid VM. I suspect it'll probably work on other Debian-ish platforms. It's also know to work on Precise.
++ I've tested this to death on an Ubuntu Lucid VM. I suspect it'll probably work on other Debian-ish platforms. It's also known to work on Precise.
 + The configuration step for chef-solr assumes there's no data in there that we care about (which is obviously true for a new installation), and nukes the whole thing. There may be ways around this, but I don't know how Solr works and I really have no desire to.
 
