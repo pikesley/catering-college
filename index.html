@@ -1,74 +1,110 @@
 <!DOCTYPE html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Catering-college : Install chef-server from scratch using rvm and ruby 1.9.2" />
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Catering-college</title>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Catering-college by pikesley</title>
   </head>
 
   <body>
+    <div id="container">
+      <div class="inner">
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/pikesley/catering-college">Fork Me on GitHub</a>
-
-          <h1 id="project_title">Catering-college</h1>
-          <h2 id="project_tagline">Install chef-server from scratch using rvm and ruby 1.9.2</h2>
-
-          <section id="downloads">
-            <a class="zip_download_link" href="https://github.com/pikesley/catering-college/zipball/master">Download this project as a .zip file</a>
-            <a class="tar_download_link" href="https://github.com/pikesley/catering-college/tarball/master">Download this project as a tar.gz file</a>
-          </section>
+        <header>
+          <h1>Catering-college</h1>
+          <h2>Install chef-server from scratch using rvm and ruby 1.9.2</h2>
         </header>
-    </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>Welcome to GitHub Pages.</h3>
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/pikesley/catering-college/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/pikesley/catering-college/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/pikesley/catering-college" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+        <hr>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+        <section id="main_content">
+          <h1>Install chef-server from scratch</h1>
+
+<p>Installing your own Chef server can be a bit hoop-jumpy. This abstracts all of those hoops into one (ugly) script which does all the jumping for you.</p>
+
+<h2>What does it do?</h2>
+
+<p>Chef server depends on a truckload of not-necessarily-easy-to-install things. We mostly follow <a href="http://wiki.opscode.com/display/chef/Installing+Chef+Server+Manually">this</a> with a detour into RVM and Ruby 1.9.3.</p>
+
+<p>The script:</p>
+
+<ul>
+<li>Installs CouchDB</li>
+<li>Installs and configures RabbitMQ (a more recent version than is in the Ubuntu repos)</li>
+<li>Installs Sun Java 1.6 (using <a href="https://github.com/flexiondotorg/oab-java6">this witchcraft</a>) - THIS IS NOW BROKEN, SEE BELOW</li>
+<li>Installs OpsCode's Gecode</li>
+<li>Installs RVM</li>
+<li>Installs Ruby 1.9.3 (which isn't yet in the Ubuntu repos)</li>
+<li>Installs the Chef gems</li>
+<li>Configures the Chef server</li>
+<li>Creates upstart scripts for each of the Chef components</li>
+<li>Installs nginx to proxy the WebUI</li>
+</ul><p>Regarding Java, the delightful people at Oracle, always the friends of free software, have moved the goalposts and the oab-java6 thing no longer works (UPDATE: I've had it working intermittently on a Vagrant box, and I've had it working recently on an EC2 node). I know people have come up with workarounds for this, but no doubt these will get stepped on soon, too. Life is too short to spend it trying to outwit lawyer-driven corporations, so it now tests if Java is already installed, and if not, installs OpenJDK (which seems to work OK for me).</p>
+
+<p>These steps are mostly idempotent.</p>
+
+<h2>How to use it</h2>
+
+<p>Dead-simple install:</p>
+
+<pre><code>sudo apt-get install -y curl ; bash &lt;(curl -s https://raw.github.com/pikesley/catering-college/master/bootstrapper) 
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<p>What the above is actually doing: we create a new user (I've used 'chef') and add them to the 'admin' group (the shortest path to sudo happiness, at least on Ubuntu). Then, as this new user, checkout and run the script.</p>
 
-<h3>Designer Templates</h3>
+<pre><code>NEWUSER=chef
+sudo useradd -m ${NEWUSER} -s /bin/bash
+cat /etc/group | sed "s/^\(admin:.*\)/\1,${NEWUSER}/" &gt; /tmp/group &amp;&amp; sudo mv /tmp/group /etc/
+sudo apt-get update
+sudo apt-get install -y git-core
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+sudo su - ${NEWUSER} 
 
-<h3>Rather Drive Stick?</h3>
+git clone https://github.com/pikesley/catering-college
+cd catering-college
+./install-chef-server
+</code></pre>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<p>There's a trick here: <code>visudo</code>, then change this line:</p>
 
-<h3>Authors and Contributors</h3>
+<pre><code>%admin ALL=(ALL) ALL
+</code></pre>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>to</p>
 
-<h3>Support or Contact</h3>
+<pre><code>%admin ALL=(ALL) NOPASSWD: ALL
+</code></pre>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact support@github.com and we’ll help you sort it out.</p>
-      </section>
+<p>to allow members of the 'admin' group to sudo without a password. You may not want to do this, of course.</p>
+
+<h2>Caveats</h2>
+
+<ul>
+<li>I've tested this to death on an Ubuntu Lucid VM. I suspect it'll probably work on other Debian-ish platforms. It's also known to work on Precise.</li>
+<li>The configuration step for chef-solr assumes there's no data in there that we care about (which is obviously true for a new installation), and nukes the whole thing. There may be ways around this, but I don't know how Solr works and I really have no desire to.</li>
+</ul>
+        </section>
+
+        <footer>
+          Catering-college is maintained by <a href="https://github.com/pikesley">pikesley</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
     </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Catering-college maintained by <a href="https://github.com/pikesley">pikesley</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
   </body>
 </html>
