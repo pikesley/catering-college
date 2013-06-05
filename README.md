@@ -23,7 +23,7 @@ The script:
 
 Regarding Java, the delightful people at Oracle, always the friends of free software, have moved the goalposts and the oab-java6 thing no longer works (UPDATE: I've had it working intermittently on a Vagrant box, and I've had it working recently on an EC2 node). I know people have come up with workarounds for this, but no doubt these will get stepped on soon, too. Life is too short to spend it trying to outwit lawyer-driven corporations, so it now tests if Java is already installed, and if not, installs OpenJDK (which seems to work OK for me).
 
-These steps are mostly idempotent.
+These steps are mostly idempotent. Foo bar
 
 How to use it
 -------------
